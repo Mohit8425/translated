@@ -9,7 +9,7 @@ appConfig:
         commands:
           - npm run build
     artifacts:
-      baseDirectory: dist
+      baseDirectory: src
       files:
         - '**/*'
   backend:
