@@ -1,13 +1,25 @@
-my-amplify-app
-├── src
-│   ├── index.html
-│   ├── js
-│   │   ├── amplify-config.js
-│   │   ├── form-handlers.js
-│   │   └── upload-handler.js
-├── amplify
-│   └── backend.ts
-├── amplify.yaml
-├── package.json
-├── schema.graphql
-└── README.md
+{
+  "name": "translated",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.14.0",
+    "@aws-amplify/backend-cli": "^1.4.9",
+    "aws-cdk": "^2.178.1",
+    "aws-cdk-lib": "^2.178.1",
+    "constructs": "^10.4.2",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "aws-amplify": "^6.13.0"
+  }
+}

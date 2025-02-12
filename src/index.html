@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Translated - Translation Services</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/aws-amplify@6.0.12/dist/aws-amplify.min.js"></script>
+  <script type="module">
+    import { uploadToS3 } from './js/upload-handler.js';
+    import { configureAmplify } from './js/amplify-config.js';
+    import { uploadFile, submitForm } from './js/form-handlers.js';
+    
+    configureAmplify();
+  </script>
+</head>
+<body class="bg-gradient-to-r from-white to-[#EBEEFF] text-gray-700">
+
+  <!-- Navigation -->
+  <nav class="flex items-center justify-between px-6 md:px-8 py-4 bg-white shadow-sm">
+    <!-- Logo -->
+    <div>
+      <img src="/translated-logo.svg" alt="Translated" class="w-[142px] h-[40px]"/>
+    </div>
+
+    <!-- Links (hidden on small screens) -->
+    <div class="hidden md:flex items-center space-x-6">
+      <button class="text-gray-700 hover:text-gray-900 font-medium">About us</button>
+      <button class="text-gray-700 hover:text-gray-900 font-medium">Our services</button>
+      <button class="text-gray-700 hover:text-gray-900 font-medium">FAQ</button>
+    </div>
+
+    <!-- Contact & CTA -->
+    <div class="flex items-center gap-2">
+      <button class="inline-flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
+        <i data-lucide="mail" class="w-4 h-4"></i>
+        support@translated.com
+      </button>
+      <button class="inline-flex items-center gap-2 px-3 py-2 text-sm bg-green-500 text-white rounded-md hover:bg-green-600">
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+        WhatsApp
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="text-center py-16 px-4 shadow-sm rounded-md">
+    <div class="max-w-3xl mx-auto">
+      <!-- “100% ONLINE” badge -->
+      <span class="inline-block bg-[#EBEEFF] text-[#0014CB] px-5 py-1.5 rounded-full text-xs font-bold tracking-wide">
+        100% ONLINE
+      </span>
+
+      <!-- Title -->
+      <h1 class="text-4xl md:text-5xl font-semibold mt-8 mb-5 leading-tight">
+        Same Day Legal and Certified Translation in the UAE
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-lg text-gray-600 mb-8 px-4">
+        Don’t waste time waiting for a quote! Upload your documents now, pay online and get your legal or certified
+        translation on the same day!
+      </p>
+
+      <!-- Call to Action -->
+      <a 
+        href="#uploadSection"
+        class="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-500 border rounded-md hover:bg-[#EBEEFF]/90 transition-transform transform hover:scale-105 font-medium"
+      >
+        Upload your Documents Now
+        <i data-lucide="arrow-down" class="w-4 h-4"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- 
+    SECTION 1: UPLOAD / FORM 
+    Hidden when user clicks "Continue," 
+    revealing the Review Section.
+  -->
+  <section 
+    id="uploadSection"
+    class="max-w-5xl mx-auto px-4 py-10 bg-white border border-gray-200 rounded-md shadow-md mt-8"
+  >
+    <!-- Upload Heading -->
+    <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-center">Upload Your Document</h2>
+
+    <!-- Drop Zone & Info -->
+    <div class="border-2 border-dashed border-gray-300 rounded-md p-8 text-center mb-4 bg-gradient-to-r from-white to-[#EBEEFF]">
+      <i data-lucide="file-up" class="mx-auto w-14 h-14 text-[#0014CB] mb-3"></i>
+      <p class="font-semibold text-gray-700">
+        Drop documents (up to 10) or 
+        <label class="text-[#0014CB] cursor-pointer underline">Browse</label>
+      </p>
+      <p class="text-sm text-gray-500 mt-1">
+        Supported format: Svg, PDF, Doc, Xml, Txt
+      </p>
+    </div>
+    <div class="bg-yellow-50 p-4 rounded-md flex items-center justify-between mb-8">
+      <p class="text-yellow-800 font-semibold">
+        Maximum: 10 pages. If you have more pages, please contact us on WhatsApp or email.
+      </p>
+      <div class="flex items-center gap-3 text-yellow-800">
+        <i data-lucide="message-square" class="w-5 h-5"></i>
+        <i data-lucide="mail" class="w-5 h-5"></i>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <form class="space-y-6 max-w-3xl mx-auto">
+      <!-- Top Row: Input Language & Output Language (Default: FR -> EN) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Input Language</label>
+          <select 
+            id="inputLanguage"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          >
+            <option value="en">🇬🇧 English</option>
+            <option value="ar">🇦🇪 Arabic</option>
+            <option value="fr" selected>🇫🇷 French</option>
+            <option value="de">🇩🇪 German</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Output Language</label>
+          <select 
+            id="outputLanguage"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          >
+            <option value="en" selected>🇬🇧 English</option>
+            <option value="ar">🇦🇪 Arabic</option>
+            <option value="fr">🇫🇷 French</option>
+            <option value="de">🇩🇪 German</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 1: Number of Pages & Document type -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Number of Pages</label>
+          <input 
+            id="pagesInput"
+            type="number"
+            min="1"
+            max="10"
+            placeholder="Max. 200 words per page"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Document type</label>
+          <select 
+            id="documentType"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          >
+            <option value="">Select Document type</option>
+            <option value="legal">Legal Document</option>
+            <option value="personal">Personal Document</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 2: First Name & Last Name -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">First Name</label>
+          <input 
+            id="firstName"
+            type="text" 
+            placeholder="e.g. John"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Last Name</label>
+          <input 
+            id="lastName"
+            type="text"
+            placeholder="e.g. Doe"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          />
+        </div>
+      </div>
+
+      <!-- Row 3: Email & Phone Number -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input 
+            id="email"
+            type="email"
+            placeholder="e.g. john@example.com"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Phone Number</label>
+          <input 
+            id="phoneNumber"
+            type="tel"
+            placeholder="e.g. +971 50 123 4567"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+          />
+        </div>
+      </div>
+
+      <!-- Additional Notes -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Additional Notes or Specific Requests</label>
+        <textarea 
+          id="notes"
+          placeholder="Add your special request..."
+          class="w-full px-4 py-2 border rounded-md h-24 focus:outline-none focus:ring-2 focus:ring-[#0014CB]"
+        ></textarea>
+      </div>
+
+      <!-- Price & Continue Button -->
+      <div class="border rounded-md p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <span id="totalPrice" class="text-lg font-semibold">350 AED</span>
+            <p class="text-xs text-gray-500">*prices don’t include 5% VAT</p>
+          </div>
+          <button 
+            type="button"
+            id="continueBtn"
+            class="px-6 py-3 bg-[#0014CB] text-white rounded-md hover:bg-[#0014CB]/90 transition-transform transform hover:scale-105 font-medium"
+          >
+            Continue
+          </button>
+        </div>
+        <p class="mt-2 text-xs text-gray-500">
+          You’ll review and confirm your order details on the next step.
+        </p>
+      </div>
+    </form>
+  </section>
+
+  <!-- 
+    SECTION 2: REVIEW YOUR ORDER 
+    Hidden by default, shown once user clicks Continue 
+  -->
+  <section 
+    id="reviewSection"
+    class="max-w-5xl mx-auto px-4 py-10 bg-white border border-gray-200 rounded-md shadow-md mt-8 hidden"
+  >
+    <!-- Heading -->
+    <h1 class="text-2xl md:text-3xl font-semibold mb-6 text-center">
+      Review Your Order
+    </h1>
+
+    <!-- Personal & Document Info -->
+    <div class="mb-6 border-b border-gray-200 pb-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold text-lg">Your Details</h2>
+        <!-- 
+          We'll attach the same 'goToUpload' class so all "Edit" links share the same behavior 
+        -->
+        <a 
+          href="#"
+          class="text-sm text-blue-600 underline hover:text-blue-800 goToUpload"
+        >
+          Edit
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+        <div>
+          <span class="block font-medium text-gray-800">Input Language:</span>
+          <span id="reviewInputLang"></span>
+        </div>
+        <div>
+          <span class="block font-medium text-gray-800">Output Language:</span>
+          <span id="reviewOutputLang"></span>
+        </div>
+        <div>
+          <span class="block font-medium text-gray-800">Number of pages:</span>
+          <span id="reviewPages"></span>
+        </div>
+        <div>
+          <span class="block font-medium text-gray-800">Document Type:</span>
+          <span id="reviewDocType"></span>
+        </div>
+        <div>
+          <span class="block font-medium text-gray-800">First Name:</span>
+          <span id="reviewFirstName"></span>
+        </div>
+        <div>
+          <span class="block font-medium text-gray-800">Last Name:</span>
+          <span id="reviewLastName"></span>
+        </div>
+        <div>
+          <span class="block font-medium text-gray-800">Email:</span>
+          <span id="reviewEmail"></span>
+        </div>
+        <div>
+          <span class="block font-medium text-gray-800">Phone:</span>
+          <span id="reviewPhone"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Notes -->
+    <div class="mb-6 border-b border-gray-200 pb-4">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="font-semibold text-lg">Additional Notes or Specific Requests</h2>
+        <a 
+          href="#"
+          class="text-sm text-blue-600 underline hover:text-blue-800 goToUpload"
+        >
+          Edit
+        </a>
+      </div>
+      <p class="text-sm text-gray-600" id="reviewNotes"></p>
+    </div>
+
+    <!-- Delivery Time (Card Style) -->
+    <div class="mb-6">
+      <h2 class="font-semibold text-lg mb-4">Choose your preferred delivery time (Digital Scanned Copy)</h2>
+      
+      <!-- Card container -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- SAME DAY DELIVERY CARD -->
+        <label 
+          for="deliverySame" 
+          class="block border border-gray-200 rounded-md p-4 cursor-pointer hover:shadow-sm transition"
+        >
+          <div class="flex items-center mb-2">
+            <input 
+              type="radio" 
+              name="deliveryTimeReview" 
+              id="deliverySame" 
+              value="same-day"
+              class="h-4 w-4 text-blue-600 delivery-radio"
+            />
+            <span class="ml-2 text-sm font-semibold text-gray-900">Same Day Delivery</span>
+          </div>
+          <p class="text-xs text-gray-600">
+            Available for orders placed before 14:00 UAE Time (GST).
+            Not available on Sundays.
+            <br/>
+            Saturday 8th Feb, 2024
+          </p>
+        </label>
+
+        <!-- NEXT DAY DELIVERY CARD -->
+        <label 
+          for="deliveryNext" 
+          class="block border border-gray-200 rounded-md p-4 cursor-pointer hover:shadow-sm transition"
+        >
+          <div class="flex items-center mb-2">
+            <input 
+              type="radio" 
+              name="deliveryTimeReview" 
+              id="deliveryNext" 
+              value="next-day"
+              class="h-4 w-4 text-blue-600 delivery-radio"
+            />
+            <span class="ml-2 text-sm font-semibold text-gray-900">Next Day Delivery</span>
+          </div>
+          <p class="text-xs text-gray-600">
+            Available for orders placed before 20:00 UAE Time (GST).
+            Not available on Saturdays.
+            <br/>
+            Saturday 8th Feb, 2024
+          </p>
+        </label>
+
+        <!-- 3-DAY DELIVERY CARD (DEFAULT CHECKED) -->
+        <label 
+          for="deliveryThree" 
+          class="block border border-gray-200 rounded-md p-4 cursor-pointer hover:shadow-sm transition"
+        >
+          <div class="flex items-center mb-2">
+            <input 
+              type="radio" 
+              name="deliveryTimeReview" 
+              id="deliveryThree" 
+              value="3-day"
+              class="h-4 w-4 text-blue-600 delivery-radio"
+              checked
+            />
+            <span class="ml-2 text-sm font-semibold text-gray-900">3-Day Delivery</span>
+          </div>
+          <p class="text-xs text-gray-600">
+            Saturday 8th Feb, 2024
+          </p>
+        </label>
+      </div>
+
+      <!-- Urgent Translation note -->
+      <p class="text-xs text-gray-500 mt-4">
+        Urgent Translation (1h-4h) is available based on the complexity of the document 
+        and the number of pages. <a href="#" class="underline">Contact us for details.</a>
+      </p>
+    </div>
+
+    <!-- Simple Price Summary -->
+    <div class="mb-6">
+      <h2 class="font-semibold text-lg mb-2">Price Summary</h2>
+      <div class="bg-gray-50 border border-gray-200 rounded-md p-4 text-sm">
+        <!-- We'll show a single line: pages × rate = total  -->
+        <p 
+          id="summaryLine" 
+          class="text-gray-700 font-semibold"
+        >
+          <!-- JS will fill this in dynamically -->
+        </p>
+        <p class="text-xs text-gray-500 mt-1">*Prices do not include 5% VAT.</p>
+      </div>
+    </div>
+
+    <!-- Proceed to Payment -->
+    <div class="flex items-center justify-end">
+      <a
+        href="#"
+        class="inline-flex items-center gap-2 px-6 py-3 bg-[#0014CB] text-white rounded-md hover:bg-[#0014CB]/90 transition-transform transform hover:scale-105 font-medium"
+      >
+        Proceed to Payment
+      </a>
+    </div>
+  </section>
+
+  <!-- Services and Languages Section -->
+  <section class="py-12 px-4">
+    <div class="max-w-5xl mx-auto">
+      <!-- Heading & Intro Text -->
+      <div class="mb-8">
+        <h2 class="text-2xl md:text-3xl font-semibold mb-2 text-gray-900">
+          Best and Fastest Legal and Certified Translation Services in the UAE 
+        </h2>
+        <p class="text-gray-600">
+          We provide accurate legal and certified translations for all your documents, trusted by clients worldwide.
+          Whether you’re a business or an individual, our team ensures precision, accuracy, and efficiency at every step.
+          If you’re in a hurry, get our same-day translation premium service.
+        </p>
+      </div>
+
+      <!-- 4 Bullet Points -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="text-center">
+          <i data-lucide="check-circle" class="w-6 h-6 mb-2 mx-auto text-blue-600"></i>
+          <h3 class="font-semibold text-gray-800">Legal & Certified</h3>
+          <p class="text-sm text-gray-600 mt-2">
+            Officially recognized translations for legal use.
+          </p>
+        </div>
+        <div class="text-center">
+          <i data-lucide="check-circle" class="w-6 h-6 mb-2 mx-auto text-blue-600"></i>
+          <h3 class="font-semibold text-gray-800">Expert Linguists</h3>
+          <p class="text-sm text-gray-600 mt-2">
+            Specialists with legal and linguistic expertise.
+          </p>
+        </div>
+        <div class="text-center">
+          <i data-lucide="check-circle" class="w-6 h-6 mb-2 mx-auto text-blue-600"></i>
+          <h3 class="font-semibold text-gray-800">Fast Turnaround</h3>
+          <p class="text-sm text-gray-600 mt-2">
+            Receive your translations quickly and efficiently.
+          </p>
+        </div>
+        <div class="text-center">
+          <i data-lucide="check-circle" class="w-6 h-6 mb-2 mx-auto text-blue-600"></i>
+          <h3 class="font-semibold text-gray-800">Secure & Confidential</h3>
+          <p class="text-sm text-gray-600 mt-2">
+            We prioritize the security of your documents.
+          </p>
+        </div>
+      </div>
+
+      <!-- Horizontal Divider -->
+      <hr class="border-gray-200 mb-8" />
+
+      <!-- Languages Heading -->
+      <div class="mb-6">
+        <h3 class="text-xl md:text-2xl font-semibold text-gray-900">
+          We translate documents in a wide range of languages, including:
+        </h3>
+      </div>
+
+      <!-- Two Columns: Popular Languages / Other Languages -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Popular Languages -->
+        <div>
+          <h4 class="font-medium text-gray-800 mb-3">Popular Languages</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇩🇪</span> German
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇦🇪</span> Arabic
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇬🇧</span> English
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇪🇸</span> Spanish
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇫🇷</span> French
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇮🇹</span> Italian
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇨🇳</span> Chinese (Mandarin)
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇷🇺</span> Russian
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Languages -->
+        <div>
+          <h4 class="font-medium text-gray-800 mb-3">Other Languages</h4>
+          <div class="flex flex-wrap gap-2">
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇮🇳</span> Hindi
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇯🇵</span> Japanese
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇰🇷</span> Korean
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇵🇹</span> Portuguese
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇳🇱</span> Dutch
+            </div>
+            <div class="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-1">
+              <span>🇹🇷</span> Turkish
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Green Callout Box -->
+      <div class="bg-green-50 border border-green-100 rounded-md p-4 text-green-700">
+        <p>
+          We offer certified and legal translation in more languages. 
+          <a href="#" class="text-green-800 underline font-medium">Contact us</a> for special requests.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Achievements Section -->
+  <section class="py-14">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl font-semibold mb-8 text-center md:text-left">
+        Our Achievements at a Glance
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow text-center">
+          <div class="w-16 h-16 bg-slate-50 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <i data-lucide="file-arrow-up" class="h-8 w-8"></i>
+          </div>
+          <h3 class="text-2xl font-semibold">10,245+</h3>
+          <p class="text-gray-600">Documents Translated</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow text-center">
+          <div class="w-16 h-16 bg-slate-50 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <i data-lucide="smile" class="h-8 w-8"></i>
+          </div>
+          <h3 class="text-2xl font-semibold">1800+</h3>
+          <p class="text-gray-600">Happy Clients</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow text-center">
+          <div class="w-16 h-16 bg-slate-50 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <i data-lucide="users" class="h-8 w-8"></i>
+          </div>
+          <h3 class="text-2xl font-semibold">30+</h3>
+          <p class="text-gray-600">Native Linguists</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t py-8 mt-8 bg-white rounded-md shadow-md">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-gray-600">
+        © 2025 Translated. All rights reserved.
+      </p>
+      <div class="flex gap-6">
+        <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Blog</a>
+        <a href="#" class="text-sm text-gray-600 hover:text-gray-900">FAQ</a>
+        <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Privacy Policy</a>
+        <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Initialize Lucide Icons & JS to handle toggling -->
+  <script>
+    lucide.createIcons();
+
+    // A map for showing the flag + full name in the review step
+    const languageMap = {
+      'en': '🇬🇧 English',
+      'ar': '🇦🇪 Arabic',
+      'fr': '🇫🇷 French',
+      'de': '🇩🇪 German'
+    };
+
+    // --- GLOBAL PRICE VARIABLES ---
+    let currentRate = 350;   // default to 3-day rate
+    let pageCount = 1;       // default 1 page
+
+    // --- FIRST STEP PRICE LOGIC ---
+    const pagesInput = document.getElementById('pagesInput');
+    const totalPriceSpan = document.getElementById('totalPrice');
+
+    function updateFormPrice() {
+      let pages = parseInt(pagesInput.value || 1, 10);
+      if (pages < 1) pages = 1;
+      if (pages > 10) pages = 10;
+      pagesInput.value = pages;
+      pageCount = pages;
+      // Multiply pages by currentRate
+      totalPriceSpan.textContent = (currentRate * pages) + ' AED';
+    }
+
+    pagesInput.addEventListener('input', updateFormPrice);
+
+    // --- STEP TOGGLE ---
+    const continueBtn = document.getElementById('continueBtn');
+    const uploadSection = document.getElementById('uploadSection');
+    const reviewSection = document.getElementById('reviewSection');
+
+    // --- REVIEW FIELDS ---
+    const reviewInputLang = document.getElementById('reviewInputLang');
+    const reviewOutputLang = document.getElementById('reviewOutputLang');
+    const reviewPages = document.getElementById('reviewPages');
+    const reviewDocType = document.getElementById('reviewDocType');
+    const reviewFirstName = document.getElementById('reviewFirstName');
+    const reviewLastName = document.getElementById('reviewLastName');
+    const reviewEmail = document.getElementById('reviewEmail');
+    const reviewPhone = document.getElementById('reviewPhone');
+    const reviewNotes = document.getElementById('reviewNotes');
+    const summaryLine = document.getElementById('summaryLine');
+
+    continueBtn.addEventListener('click', () => {
+      // Gather first-step data
+      const inLang = document.getElementById('inputLanguage').value;
+      const outLang = document.getElementById('outputLanguage').value;
+      const docType = document.getElementById('documentType').value;
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phoneNumber').value;
+      const notesVal = document.getElementById('notes').value;
+
+      // Ensure pageCount is updated
+      updateFormPrice();
+
+      // Use the language map to show the full name with the flag
+      reviewInputLang.textContent = languageMap[inLang] || 'N/A';
+      reviewOutputLang.textContent = languageMap[outLang] || 'N/A';
+
+      reviewPages.textContent = pageCount;
+      reviewDocType.textContent = docType ? docType : 'N/A';
+      reviewFirstName.textContent = firstName;
+      reviewLastName.textContent = lastName;
+      reviewEmail.textContent = email;
+      reviewPhone.textContent = phone;
+      reviewNotes.textContent = notesVal ? notesVal : '(No special notes)';
+
+      // Show second step
+      uploadSection.classList.add('hidden');
+      reviewSection.classList.remove('hidden');
+
+      // If no radio is checked yet, default to 3-day
+      let anyChecked = false;
+      document.querySelectorAll('.delivery-radio').forEach(r => {
+        if (r.checked) anyChecked = true;
+      });
+      if (!anyChecked) {
+        currentRate = 350;
+        document.getElementById('deliveryThree').checked = true;
+      }
+
+      // Refresh second-step summary
+      refreshSummary();
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // --- GO BACK (EDIT) LINKS ---
+    // All "Edit" links have class "goToUpload"
+    const editLinks = document.querySelectorAll('.goToUpload');
+    editLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault(); // prevent anchor jump
+        // Hide second step, show first
+        reviewSection.classList.add('hidden');
+        uploadSection.classList.remove('hidden');
+        // Update the first step price to reflect currentRate
+        updateFormPrice();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    // --- SECOND STEP DELIVERY TIME LOGIC ---
+    const deliveryRadios = document.querySelectorAll('.delivery-radio');
+    deliveryRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === '3-day') {
+          currentRate = 350;
+        } else if (val === 'next-day') {
+          currentRate = 450;
+        } else if (val === 'same-day') {
+          currentRate = 550;
+        }
+        refreshSummary();
+        // Also update first step's displayed price to keep it consistent
+        updateFormPrice();
+      });
+    });
+
+    function refreshSummary() {
+      const total = pageCount * currentRate;
+      summaryLine.textContent = 
+        `Number of Pages: ${pageCount} × ${currentRate} AED per page = ${total} AED (subtotal)`;
+    }
+
+    // Initialize on page load: ensure placeholders and default price
+    updateFormPrice();
+  </script>
+</body>
+</html>

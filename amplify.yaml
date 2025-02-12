@@ -2,19 +2,25 @@ version: 2
 appConfig:
   frontend:
     phases:
+      preBuild:
+        commands:
+          - npm ci
       build:
         commands:
-          - echo "Building static site"
-          - npm install
           - npm run build
     artifacts:
-      baseDirectory: /
+      baseDirectory: dist
       files:
         - '**/*'
-    cache:
-      paths: []
   backend:
     phases:
+      preBuild:
+        commands:
+          - npm ci
       build:
         commands:
-          - amplify generate backend
+          - npm run amplify push
+    artifacts:
+      baseDirectory: amplify/backend
+      files:
+        - '**/*'
