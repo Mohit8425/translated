@@ -7,20 +7,20 @@ const schema = a.schema({
       targetLanguage: a.string(),
       status: a.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED']),
       clientEmail: a.string(),
-      notes: a.string().required(false),
-      files: a.hasMany('TranslationFile'),
+      notes: a.string(),  // optional by default
+      files: a.hasMany('TranslationFile', 'request'),
     })
-    .authorization([a => a.allow.guest()]),
+    .authorization(allow => allow.guest()),
 
   TranslationFile: a
     .model({
       fileName: a.string(),
       fileUrl: a.string(),
-      translatedFileUrl: a.string().required(false),
+      translatedFileUrl: a.string(),  // optional by default
       request: a.belongsTo('TranslationRequest'),
       status: a.enum(['PENDING', 'TRANSLATED', 'FAILED']),
     })
-    .authorization([a => a.allow.guest()]),
+    .authorization(allow => allow.guest()),
 });
 
 export type Schema = ClientSchema<typeof schema>;

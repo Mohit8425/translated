@@ -2,28 +2,24 @@ import { defineStorage } from '@aws-amplify/backend';
 
 export const storage = defineStorage({
   name: 'translation-storage',
-  authorization: {
-    authenticated: {
+  access: {
+    auth: {
       read: true,
       write: true,
     },
-    guest: {
+    unauth: {
       read: true,
       write: true,
     }
   },
-  folders: {
+  directory: {
     source: {
-      access: ['read', 'write'],
+      operations: ['read', 'write'],
     },
     translated: {
-      access: ['read'],
+      operations: ['read'],
     }
   },
-  uploadConstraints: {
-    maxFileSize: 100 * 1024 * 1024, // 100MB max file size
-    allowedFileTypes: [
-      'application/pdf',
-    ]
-  }
+  maxFileSize: 100 * 1024 * 1024, // 100MB
+  fileTypes: ['application/pdf']
 });
