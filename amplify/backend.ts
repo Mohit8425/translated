@@ -14,3 +14,7 @@
   //data,    // Handles database operations and API endpoints
   //storage  // Manages file storage operations
 //});
+import { defineBackend } from '@aws-amplify/backend';
+
+// Minimal backend configuration for deployment testing
+export const backend = defineBackend({});
