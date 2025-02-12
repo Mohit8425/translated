@@ -1,0 +1,18 @@
+version: 2
+appConfig:
+  frontend:
+    phases:
+      build:
+        commands:
+          - echo "Building static site"
+    artifacts:
+      baseDirectory: /
+      files:
+        - '**/*'
+    cache:
+      paths: []
+  backend:
+    phases:
+      build:
+        commands:
+          - amplify generate backend

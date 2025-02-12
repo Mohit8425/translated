@@ -1,0 +1,22 @@
+type Translation @model {
+  id: ID!
+  fileKey: String!
+  inputLanguage: String!
+  outputLanguage: String!
+  pages: Int!
+  documentType: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+  notes: String
+  status: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type S3SignedUrl @model {
+  id: ID!
+  url: String!
+  expiresAt: AWSDateTime!
+}
