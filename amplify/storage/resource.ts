@@ -1,25 +1,21 @@
 import { defineStorage } from '@aws-amplify/backend';
 
+/**
+ * Configure S3 storage for file uploads
+ * Sets up public and private access rules
+ */
 export const storage = defineStorage({
-  name: 'translation-storage',
-  access: {
-    auth: {
-      read: true,
-      write: true,
-    },
-    unauth: {
-      read: true,
-      write: true,
-    }
-  },
-  directory: {
-    source: {
-      operations: ['read', 'write'],
-    },
-    translated: {
-      operations: ['read'],
-    }
-  },
-  maxFileSize: 100 * 1024 * 1024, // 100MB
-  fileTypes: ['application/pdf']
+  name: 'translatedStorage',
+  authorization: {
+    rules: [
+      {
+        allow: 'public',
+        operations: ['read']
+      },
+      {
+        allow: 'private',
+        operations: ['create', 'read', 'update', 'delete']
+      }
+    ]
+  }
 });
