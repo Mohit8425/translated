@@ -5,6 +5,8 @@ appConfig:
       build:
         commands:
           - echo "Building static site"
+          - npm install
+          - npm run build
     artifacts:
       baseDirectory: /
       files:
