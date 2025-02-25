@@ -4,23 +4,23 @@ appConfig:
     phases:
       preBuild:
         commands:
-          - echo "No pre-build steps required for a static site"
+          - npm ci
       build:
         commands:
-          - mkdir -p dist && cp -R translated/* dist && ls -la dist
+          - npm run build
     artifacts:
-      baseDirectory: dist
+      baseDirectory: src
       files:
         - '**/*'
   backend:
     phases:
       preBuild:
         commands:
-          - echo "No backend build steps"
+          - npm ci
       build:
         commands:
-          - echo "No backend build steps"
+          - npm run amplify push
     artifacts:
-      baseDirectory: .
+      baseDirectory: amplify/backend
       files:
         - '**/*'
