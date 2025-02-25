@@ -7,7 +7,7 @@ appConfig:
           - echo "No pre-build steps required for a static site"
       build:
         commands:
-          - mkdir -p dist && cp -R translated/* dist
+          - mkdir -p dist && cp -R translated/* dist && ls -la dist
     artifacts:
       baseDirectory: dist
       files:
